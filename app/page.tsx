@@ -7,7 +7,8 @@ import { RankingPanel } from '@/components/ranking-panel'
 import { CategoryFilter } from '@/components/category-filter'
 import { Post } from '@/lib/types'
 import { Suspense } from 'react'
-import { Flame, Clock } from 'lucide-react'
+import { Clock } from 'lucide-react'
+import { RaisedFistIcon } from '@/components/icons/raised-fist'
 
 function getSessionId(cookieStore: Awaited<ReturnType<typeof cookies>>) {
   let sid = cookieStore.get('fuf_session')?.value
@@ -110,7 +111,7 @@ export default async function HomePage({ searchParams }: PageProps) {
             {/* Sort + filter */}
             <div className="mb-4 flex flex-wrap items-center gap-3">
               <div className="flex gap-1 rounded-lg border border-border bg-card p-1">
-                <SortTab href="/?sort=trending" active={sort !== 'recent'} icon={<Flame className="h-3.5 w-3.5" />} label="Trending" />
+                <SortTab href="/?sort=trending" active={sort !== 'recent'} icon={<RaisedFistIcon className="h-3.5 w-3.5" />} label="Witnessed" />
                 <SortTab href="/?sort=recent" active={sort === 'recent'} icon={<Clock className="h-3.5 w-3.5" />} label="Recent" />
               </div>
             </div>
@@ -154,7 +155,7 @@ export default async function HomePage({ searchParams }: PageProps) {
                 serve as evidence in democratic or legal processes.
               </p>
               <p className="mt-2 text-xs text-muted-foreground">
-                No personal data is stored. No tracking. No ads.
+                No personal data is stored. No tracking. No ads. <a href="/imprint" className="underline hover:text-foreground transition-colors">Imprint</a>.
               </p>
             </div>
           </aside>

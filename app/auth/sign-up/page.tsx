@@ -6,13 +6,14 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ShieldAlert, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { ShieldAlert, ArrowLeft, CheckCircle2, RefreshCw } from 'lucide-react'
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [resending, setResending] = useState(false)
   const [success, setSuccess] = useState(false)
 
   async function handleSignUp(e: React.FormEvent) {
@@ -21,23 +22,48 @@ export default function SignUpPage() {
     setError(null)
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo:
-          process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ??
-          `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     })
 
     if (error) {
       setError(error.message)
       setLoading(false)
-    } else {
-      setSuccess(true)
-      setLoading(false)
+      return
     }
+    
+    // Check if user already exists (Supabase returns user with identities = [] for existing users)
+    if (data.user && data.user.identities && data.user.identities.length === 0) {
+      setError('An account with this email already exists. Please sign in instead.')
+      setLoading(false)
+      return
+    }
+    
+    setSuccess(true)
+    setLoading(false)
+  }
+  
+  async function handleResendConfirmation() {
+    setResending(true)
+    setError(null)
+    
+    const supabase = createClient()
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
+    
+    if (error) {
+      setError(error.message)
+    }
+    setResending(false)
   }
 
   if (success) {
@@ -50,7 +76,25 @@ export default function SignUpPage() {
             We sent a confirmation link to <strong className="text-foreground">{email}</strong>.
             Click it to activate your account.
           </p>
-          <Link href="/auth/login" className="mt-6 block">
+          <p className="mt-4 text-xs text-muted-foreground">
+            {"Didn't receive the email? Check your spam folder or"}
+          </p>
+          <Button 
+            variant="ghost" 
+            onClick={handleResendConfirmation}
+            disabled={resending}
+            className="mt-2 w-full text-primary hover:text-primary/80"
+          >
+            {resending ? (
+              <>
+                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                Resending...
+              </>
+            ) : (
+              'Resend confirmation email'
+            )}
+          </Button>
+          <Link href="/auth/login" className="mt-4 block">
             <Button variant="outline" className="w-full border-border">
               Back to sign in
             </Button>

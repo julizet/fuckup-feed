@@ -7,6 +7,8 @@ import { formatDistanceToNow } from 'date-fns'
 import { ArrowUp, MapPin, Trash2, LayoutList } from 'lucide-react'
 import { DeletePostButton } from '@/components/delete-post-button'
 
+const DAILY_POST_LIMIT = 3
+
 export default async function MyPostsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -20,20 +22,37 @@ export default async function MyPostsPage() {
     .order('created_at', { ascending: false })
 
   const posts: Post[] = rawPosts ?? []
+  
+  // Calculate posts made today
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const postsToday = posts.filter(post => new Date(post.created_at) >= today).length
+  const remainingToday = Math.max(0, DAILY_POST_LIMIT - postsToday)
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar user={user} />
       <main className="mx-auto max-w-2xl px-4 py-10">
-        <div className="mb-8 flex items-center gap-3">
-          <LayoutList className="h-7 w-7 text-primary" />
-          <div>
-            <h1 className="text-3xl font-black text-foreground">My Posts</h1>
-            <p className="text-sm text-muted-foreground">
-              {posts.length === 0
-                ? 'You have not reported anything yet.'
-                : `${posts.length} report${posts.length === 1 ? '' : 's'} submitted anonymously.`}
-            </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <LayoutList className="h-7 w-7 text-primary" />
+            <div>
+              <h1 className="text-3xl font-black text-foreground">My Fuckups</h1>
+              <p className="text-sm text-muted-foreground">
+                {posts.length === 0
+                  ? 'You have not reported anything yet.'
+                  : `${posts.length} report${posts.length === 1 ? '' : 's'} submitted anonymously.`}
+              </p>
+            </div>
+          </div>
+          
+          {/* Daily limit counter */}
+          <div className="flex flex-col items-end">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-black text-primary">{remainingToday}</span>
+              <span className="text-sm text-muted-foreground">/ {DAILY_POST_LIMIT}</span>
+            </div>
+            <p className="text-xs text-muted-foreground">posts left today</p>
           </div>
         </div>
 
