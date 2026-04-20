@@ -40,7 +40,7 @@ export function Navbar({ user }: NavbarProps) {
                 className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
                 <LayoutList className="h-4 w-4" />
-                My Posts
+                My Fuckups
               </Link>
               <Link href="/submit">
                 <Button size="sm" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
@@ -90,7 +90,7 @@ export function Navbar({ user }: NavbarProps) {
                   onClick={() => setMenuOpen(false)}
                 >
                   <LayoutList className="h-4 w-4" />
-                  My Posts
+                  My Fuckups
                 </Link>
                 <Link href="/submit" onClick={() => setMenuOpen(false)}>
                   <Button size="sm" className="w-full gap-2 bg-primary text-primary-foreground">
