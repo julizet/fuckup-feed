@@ -154,7 +154,7 @@ export default async function HomePage({ searchParams }: PageProps) {
                 serve as evidence in democratic or legal processes.
               </p>
               <p className="mt-2 text-xs text-muted-foreground">
-                No personal data is stored. No tracking. No ads.
+                No personal data is stored. No tracking. No ads. <a href="/imprint" className="underline hover:text-foreground transition-colors">Imprint</a>.
               </p>
             </div>
           </aside>
