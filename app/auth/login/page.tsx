@@ -25,7 +25,14 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
-      setError(error.message)
+      // Provide more helpful error messages
+      if (error.message.includes('Email not confirmed')) {
+        setError('Your email is not confirmed yet. Please check your inbox and click the confirmation link, or sign up again to receive a new link.')
+      } else if (error.message.includes('Invalid login credentials')) {
+        setError('Invalid email or password. Please check your credentials and try again.')
+      } else {
+        setError(error.message)
+      }
       setLoading(false)
     } else {
       router.push('/')
@@ -92,6 +99,10 @@ export default function LoginPage() {
                 {error}
               </p>
             )}
+            
+            <Link href="/auth/forgot-password" className="text-xs text-muted-foreground hover:text-primary transition-colors self-end -mt-2">
+              Forgot password?
+            </Link>
 
             <Button
               type="submit"
