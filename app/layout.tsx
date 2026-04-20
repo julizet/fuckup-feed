@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   description:
     'An anonymous platform to report, rate, and amplify daily experiences of discrimination, racism, homophobia, and political misconduct. Give a voice to those who need it most.',
   generator: 'v0.app',
+  icons: {
+    icon: '/fuckupFeed_fav.png',
+    apple: '/fuckupFeed_fav.png',
+  },
 }
 
 export default function RootLayout({
