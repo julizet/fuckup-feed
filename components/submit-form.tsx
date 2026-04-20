@@ -25,7 +25,7 @@ export function SubmitForm({ userId }: SubmitFormProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [location, setLocation] = useState('')
-  const [category, setCategory] = useState<Category>('other')
+  const [category, setCategory] = useState<Category | null>(null)
   const [hashtagInput, setHashtagInput] = useState('')
   const [hashtags, setHashtags] = useState<string[]>([])
   const [imageFile, setImageFile] = useState<File | null>(null)
@@ -74,6 +74,10 @@ export function SubmitForm({ userId }: SubmitFormProps) {
     e.preventDefault()
     if (!title.trim() || !description.trim()) {
       setError('Title and description are required.')
+      return
+    }
+    if (!category) {
+      setError('Please select a category.')
       return
     }
     if (!humanVerified) {
@@ -131,7 +135,7 @@ export function SubmitForm({ userId }: SubmitFormProps) {
       {/* Category */}
       <div className="flex flex-col gap-2">
         <Label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
-          Category
+          Category <span className="text-primary">*</span>
         </Label>
         <div className="flex flex-wrap gap-2">
           {CATEGORIES.map(cat => (

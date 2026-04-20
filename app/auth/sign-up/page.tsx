@@ -6,27 +6,56 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ShieldAlert, ArrowLeft, CheckCircle2, RefreshCw } from 'lucide-react'
+import { ShieldAlert, ArrowLeft, CheckCircle2, RefreshCw, Eye, EyeOff } from 'lucide-react'
+import { getSiteUrl } from '@/lib/utils/site-url'
+
+// Password validation requirements
+function validatePassword(password: string): { valid: boolean; errors: string[] } {
+  const errors: string[] = []
+  if (password.length < 8) errors.push('At least 8 characters')
+  if (!/[A-Z]/.test(password)) errors.push('One uppercase letter')
+  if (!/[a-z]/.test(password)) errors.push('One lowercase letter')
+  if (!/[0-9]/.test(password)) errors.push('One number')
+  if (!/[!@#$%^&*(),.?":{}|<>_\-+=]/.test(password)) errors.push('One special character')
+  return { valid: errors.length === 0, errors }
+}
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [passwordErrors, setPasswordErrors] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [resending, setResending] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+
+  function handlePasswordChange(value: string) {
+    setPassword(value)
+    const { errors } = validatePassword(value)
+    setPasswordErrors(errors)
+  }
 
   async function handleSignUp(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
+    // Validate password before submitting
+    const { valid, errors } = validatePassword(password)
+    if (!valid) {
+      setPasswordErrors(errors)
+      setError('Please meet all password requirements.')
+      setLoading(false)
+      return
+    }
+
     const supabase = createClient()
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${getSiteUrl()}/auth/callback`,
       },
     })
 
@@ -56,7 +85,7 @@ export default function SignUpPage() {
       type: 'signup',
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${getSiteUrl()}/auth/callback`,
       },
     })
     
@@ -147,16 +176,38 @@ export default function SignUpPage() {
               <Label htmlFor="password" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Password
               </Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="min. 6 characters"
-                minLength={6}
-                required
-                className="bg-input border-border"
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={e => handlePasswordChange(e.target.value)}
+                  placeholder="min. 8 characters"
+                  minLength={8}
+                  required
+                  className="bg-input border-border pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              {password.length > 0 && passwordErrors.length > 0 && (
+                <div className="mt-1 text-xs text-muted-foreground">
+                  <span className="font-semibold">Required:</span>{' '}
+                  {passwordErrors.map((err, i) => (
+                    <span key={err} className="text-destructive">
+                      {err}{i < passwordErrors.length - 1 ? ', ' : ''}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {password.length > 0 && passwordErrors.length === 0 && (
+                <span className="mt-1 text-xs text-green-500 font-semibold">Password meets all requirements</span>
+              )}
             </div>
 
             {error && (

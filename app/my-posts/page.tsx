@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { ArrowUp, MapPin, Trash2, LayoutList } from 'lucide-react'
 import { DeletePostButton } from '@/components/delete-post-button'
+import { AccountActions } from '@/components/account-actions'
 
 const DAILY_POST_LIMIT = 3
 
@@ -33,6 +34,9 @@ export default async function MyPostsPage() {
     <div className="min-h-screen bg-background">
       <Navbar user={user} />
       <main className="mx-auto max-w-2xl px-4 py-10">
+        {/* Account Actions */}
+        <AccountActions userEmail={user.email ?? ''} />
+        
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <LayoutList className="h-7 w-7 text-primary" />

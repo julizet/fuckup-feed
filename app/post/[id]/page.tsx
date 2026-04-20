@@ -4,7 +4,8 @@ import { notFound } from 'next/navigation'
 import { Navbar } from '@/components/navbar'
 import { VoteButton } from '@/components/vote-button'
 import { getCategoryInfo, Post } from '@/lib/types'
-import { MapPin, Clock, ArrowLeft, Link2 } from 'lucide-react'
+import { MapPin, Clock, ArrowLeft, Link2, Share2 } from 'lucide-react'
+import { ShareButton } from '@/components/share-button'
 import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -105,20 +106,23 @@ export default async function PostDetailPage({ params }: PageProps) {
           )}
 
           {/* Vote + share */}
-          <div className="mt-6 flex items-center gap-4 border-t border-border pt-5">
-            <VoteButton
-              postId={post.id}
-              initialCount={post.vote_count}
-              initialVoted={userVoted}
-              sessionId={sessionId}
-              userId={user?.id ?? null}
-            />
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-foreground">
-                {post.vote_count.toLocaleString()} {post.vote_count === 1 ? 'vote' : 'votes'}
-              </span>
-              <span className="text-xs text-muted-foreground">Click to amplify this report</span>
+          <div className="mt-6 flex items-center justify-between border-t border-border pt-5">
+            <div className="flex items-center gap-4">
+              <VoteButton
+                postId={post.id}
+                initialCount={post.vote_count}
+                initialVoted={userVoted}
+                sessionId={sessionId}
+                userId={user?.id ?? null}
+              />
+              <div className="flex flex-col">
+                <span className="text-sm font-bold text-foreground">
+                  {post.vote_count.toLocaleString()} {post.vote_count === 1 ? 'vote' : 'votes'}
+                </span>
+                <span className="text-xs text-muted-foreground">Click to amplify this report</span>
+              </div>
             </div>
+            <ShareButton postId={post.id} title={post.title} />
           </div>
 
           {/* Evidence note */}
