@@ -35,8 +35,9 @@ export default function LoginPage() {
       }
       setLoading(false)
     } else {
-      router.push('/')
-      router.refresh()
+      console.log('[v0] Login successful, redirecting...')
+      // Force a hard navigation to ensure cookies are properly read by server
+      window.location.href = '/'
     }
   }
 
