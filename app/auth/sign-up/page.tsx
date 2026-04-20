@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ShieldAlert, ArrowLeft, CheckCircle2, RefreshCw, Eye, EyeOff } from 'lucide-react'
+import { getSiteUrl } from '@/lib/utils/site-url'
 
 // Password validation requirements
 function validatePassword(password: string): { valid: boolean; errors: string[] } {
@@ -54,7 +55,7 @@ export default function SignUpPage() {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${getSiteUrl()}/auth/callback`,
       },
     })
 
@@ -84,7 +85,7 @@ export default function SignUpPage() {
       type: 'signup',
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${getSiteUrl()}/auth/callback`,
       },
     })
     

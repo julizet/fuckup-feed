@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Trash2, KeyRound, AlertTriangle, Mail, Loader2 } from 'lucide-react'
+import { getSiteUrl } from '@/lib/utils/site-url'
 
 interface AccountActionsProps {
   userEmail: string
@@ -46,7 +47,7 @@ export function AccountActions({ userEmail }: AccountActionsProps) {
     try {
       const supabase = createClient()
       const { error } = await supabase.auth.resetPasswordForEmail(userEmail, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
+        redirectTo: `${getSiteUrl()}/auth/reset-password`,
       })
       
       if (error) throw error
